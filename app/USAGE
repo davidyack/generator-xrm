@@ -1,0 +1,7 @@
+Description:
+
+  Creates a basic application for Dynamics CRM
+
+Subgenerators: 
+
+  yo xrm:tbd [options]

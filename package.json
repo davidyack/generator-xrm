@@ -1,0 +1,25 @@
+{
+  "name": "generator-xrm",
+  "version": "1.0.0",
+  "description": "Generator for Dynamics CRM projects ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidyack/generator-xrm.git"
+  },
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "David Yack",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidyack/generator-xrm/issues"
+  },
+  "homepage": "https://github.com/davidyack/generator-xrm",
+  "dependencies": {
+    "yeoman-generator": "^0.19.1"
+  }
+}
