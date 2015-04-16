@@ -1,0 +1,16 @@
+{
+  "name": "formscripting",
+  "version": "1.0.0",
+  "description": "CRM Form Scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "devDependencies": {
+    "tsd": "next",
+    "gulp": "^3.8.11",
+    "typescript": "^1.5.0-alpha"
+  },
+  "private": true
+}

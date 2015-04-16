@@ -1,6 +1,7 @@
 var path = require('path');
 var generators = require('yeoman-generator');
 
+
 module.exports = generators.Base.extend({
 	constructor: function () {
 	    generators.Base.apply(this, arguments);
@@ -52,8 +53,11 @@ module.exports = generators.Base.extend({
             this.sourceRoot(path.join(__dirname, '../templates/' + this.templatetype));
             this.fs.copyTpl(this.templatePath('/forms/FormContact.ts'), this.destinationPath('/forms/FormContact.ts'),  this.templatedata); 
             this.fs.copyTpl(this.templatePath('/lib/SharedFormLogic.ts'), this.destinationPath('/lib/SharedFormLogic.ts'),  this.templatedata);
-            this.fs.copy(this.templatePath('/project.json'), this.destinationPath( '/project.json'));            
+            this.fs.copy(this.templatePath('/xrmproject.json'), this.destinationPath('/xrmproject.json'));            
+            this.fs.copy(this.templatePath('/package.json'), this.destinationPath( '/package.json'));
             this.fs.copy(this.templatePath('/forms'), this.destinationPath('/forms'));
+            this.log('Preparing to install dependencies');
+            this.npmInstall();          
             break;
 
         case 'webresource':
@@ -63,7 +67,6 @@ module.exports = generators.Base.extend({
             this.log('Unknown project type');
         }
     },
-
     end: function () {
         this.log('\r\n');
         this.log('Your project is now created, you can use the following commands to get going');        
