@@ -1,6 +1,6 @@
 {
   "name": "generator-xrm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generator for Dynamics CRM projects ",
   "main": "index.js",
   "scripts": {
