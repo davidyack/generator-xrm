@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     tslint = require('gulp-tslint'),
     sourcemaps = require('gulp-sourcemaps'),
     rimraf = require('gulp-rimraf'),
+    browserify = require('gulp-browserify'),
     Config = require('./gulpfile.config');
     
 var config = new Config();
@@ -88,9 +89,30 @@ gulp.task('clean-ts', function () {
       .pipe(rimraf());
 });
 
-gulp.task('watch', function() {
-    gulp.watch([config.allTypeScriptWatch], ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib']);
+gulp.task('browserify', function() {
+  var production = 'production';
+  console.log(config.allJavaScriptForms);
+  gulp.src(config.allJavaScriptForms, {read: false})
+
+    // Browserify, and add source maps if this isn't a production build
+    .pipe(browserify({
+      debug: !production,
+    }))
+
+    .on('prebundle', function(bundler) {
+      // Make React available externally for dev tools
+     
+    })
+    // Output to the build directory
+    .pipe(gulp.dest('.dist/'));
 });
 
-gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib',  'watch']);
+gulp.task('watch', function () {
+    var typeScriptWatchFiles = [config.allTypeScriptForms,
+                            config.allTypeScriptLib
+                           ];
+    gulp.watch(typeScriptWatchFiles, ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib','browserify']);
+});
+
+gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib', 'browserify',  'watch']);
    
