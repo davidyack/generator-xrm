@@ -7,7 +7,7 @@ module.exports = generators.Base.extend({
 	    generators.Base.apply(this, arguments);
 	    
 	    this.argument('appname', { type: String, required: false });
-	    
+	    this.templatedata = {};
 	    
 	},
   
@@ -34,16 +34,30 @@ module.exports = generators.Base.extend({
             this.templatetype = props.type;
             done();
         }.bind(this));
-        console.log('I see you want to create ' + this.options.appname);
+        
         console.log('You chose template ' + this.templatetype);
-    console.log('This is not done yet, in the future it will let you choose one of the templates to generate');
+    
     },
-  reviewtemplatetype: function () {
-		
-        console.log('I see you want to create ' + this.options.appname);
+    askpublisher: function () {
+		var done = this.async();
+
+        var prompts = [{
+            type: 'input',
+            name: 'publisherprefix',
+            message: 'What is your publisher prefix?',
+           default : 'new_'
+           
+        }];
+
+        this.prompt(prompts, function (props) {
+            this.templatedata.publisherprefix = props.publisherprefix;
+            done();
+        }.bind(this));
+        
         console.log('You chose template ' + this.templatetype);
-        console.log('This is not done yet, in the future it will let you choose one of the templates to generate');
+    
     },
+ 
   writingtemplate: function () {
         this.sourceRoot(path.join(__dirname, './templates/projects'));
 
@@ -56,7 +70,7 @@ module.exports = generators.Base.extend({
             this.fs.copy(this.templatePath('/xrmproject.json'), this.destinationPath('/xrmproject.json'));            
             this.fs.copy(this.templatePath('/package.json'), this.destinationPath('/package.json'));
             this.fs.copy(this.templatePath('/tsd.json'), this.destinationPath('/tsd.json'));
-            this.fs.copy(this.templatePath('/gulpfile.config.js'), this.destinationPath('/gulpfile.config.js'));
+            this.fs.copyTpl(this.templatePath('/gulpfile.config.js'), this.destinationPath('/gulpfile.config.js'),this.templatedata);
             this.fs.copy(this.templatePath('/gulpfile.js'), this.destinationPath( '/gulpfile.js'));
             this.fs.copy(this.templatePath('/forms'), this.destinationPath('/forms'));
             this.fs.copy(this.templatePath('/typings'), this.destinationPath('/typings'));

@@ -6,8 +6,9 @@ var gulp = require('gulp'),
     tsc = require('gulp-typescript'),
     tslint = require('gulp-tslint'),
     sourcemaps = require('gulp-sourcemaps'),
-    rimraf = require('gulp-rimraf'),
-    browserify = require('gulp-browserify'),
+    del = require('del'),    
+    shell = require('gulp-shell'),
+    browserify = require('gulp-browserify'),  
     Config = require('./gulpfile.config');
     
 var config = new Config();
@@ -84,9 +85,10 @@ gulp.task('clean-ts', function () {
                             config.sourceLib +'**/*.js.map' // path to all sourcemap files auto gen'd by editor
                            ];
 
-  // delete the files
-  return gulp.src(typeScriptGenFiles, {read: false})
-      .pipe(rimraf());
+del(typeScriptGenFiles, function (err, paths) {
+    console.log('Deleted files/folders:\n', paths.join('\n'));
+});
+
 });
 
 gulp.task('browserify', function() {
@@ -105,6 +107,20 @@ gulp.task('browserify', function() {
     })
     // Output to the build directory
     .pipe(gulp.dest('.dist/'));
+});
+
+gulp.task('deploy', function () {
+    return gulp.src('.dist/*.js', { read: false })        
+        .pipe(shell(
+            config.deploycmd + ' /Action DeployWebResource /File <%= f(file.path) %> /UniqueName '
+            + config.publisherPrefix + '<%= f(file.path.replace(file.base, "'
+            + '")) %> /DisplayName <%= f(file.path.replace(file.base, "")) %> /WebResourceType JavaScript', {
+            templateData: {
+                f: function (s) {
+                    return s
+                }
+            }
+        }))
 });
 
 gulp.task('watch', function () {

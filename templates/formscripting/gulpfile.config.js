@@ -1,7 +1,9 @@
 'use strict';
 var GulpConfig = (function () {
     function GulpConfig() {
-              
+            
+        this.deploycmd = 'd:/github/xrmcli-net/xrmcli/bin/debug/xrmcli.exe';
+        this.publisherPrefix = '<%=publisherprefix%>_';  
         this.source = './';
         this.sourceForms = this.source + 'forms';
         this.sourceLib = this.source + 'lib';
