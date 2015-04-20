@@ -35,7 +35,7 @@ module.exports = generators.Base.extend({
             done();
         }.bind(this));
         
-        console.log('You chose template ' + this.templatetype);
+        
     
     },
     askpublisher: function () {
