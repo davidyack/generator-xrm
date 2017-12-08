@@ -1,134 +1,47 @@
-'use strict';
+var gulp = require("gulp");
+var ts = require("gulp-typescript");
+var tsProject = ts.createProject("tsconfig.json");
+var concat = require('gulp-concat')
+var webresource = require('gulp-webresource')
 
-var gulp = require('gulp'),
-    debug = require('gulp-debug'),
-    inject = require('gulp-inject'),
-    tsc = require('gulp-typescript'),
-    tslint = require('gulp-tslint'),
-    sourcemaps = require('gulp-sourcemaps'),
-    del = require('del'),    
-    shell = require('gulp-shell'),
-    browserify = require('gulp-browserify'),  
-    Config = require('./gulpfile.config');
-    
-var config = new Config();
-    
- /**
- * Generates the app.d.ts references file dynamically from all application *.ts files.
- */
-gulp.task('gen-ts-refs', function () {
-    var target = gulp.src(config.appTypeScriptReferences);
-    var sources = gulp.src([config.allTypeScriptForms], { read: false });    
-    return target.pipe(inject(sources, {
-        starttag: '//{',
-        endtag: '//}',
-        transform: function (filepath) {
-            return '/// <reference path="..' + filepath + '" />';
-        }
-    })).pipe(gulp.dest(config.typings));
-     var target = gulp.src(config.appTypeScriptReferences);
-    var sources = gulp.src([config.allTypeScriptLib], { read: false });    
-    return target.pipe(inject(sources, {
-        starttag: '//{',
-        endtag: '//}',
-        transform: function (filepath) {
-            return '/// <reference path="..' + filepath + '" />';
-        }
-    })).pipe(gulp.dest(config.typings));
+gulp.task("transpile", function () {
+    return tsProject.src()
+        .pipe(tsProject())
+        .js.pipe(gulp.dest("tscoutput"));
 });
 
+gulp.task('combinecontactformscripts',['transpile'], function() {
+    return gulp.src([        
+          './tscoutput/FormShared.js',
+          './tscoutput/FormContact.js'
+          ])
+      .pipe(concat('FormContactCombined.js'))
+      .pipe(gulp.dest('./FormScriptsCombined/'));
+  });
 
-/**
- * Lint all custom TypeScript files.
- */
-gulp.task('ts-lint', function () {
-    return gulp.src(config.allTypeScriptForms).pipe(tslint()).pipe(tslint.report('prose'));
-});
-gulp.task('ts-lint-lib', function () {
-    return gulp.src(config.allTypeScriptLib).pipe(tslint()).pipe(tslint.report('prose'));
-});
+  var config = {
+    Server:process.env.crmserver,
+    User: process.env.crmuser,
+    Password: process.env.crmpassword,
+    AccessToken:null,
+    WebResources:[
+     { Path:'FormScriptsCombined\\FormContactCombined.js',
+       UniqueName:'contoso_FormContactCombined.js',
+       Type:'JavaScript', 
+       Solution:'ContosoSolution'}     
+    ]
+}
 
-/**
- * Compile TypeScript and include references to library and app .d.ts files.
- */
-gulp.task('compile-ts', function () {
-    console.log('compile-ts starting');
-        
-    
-    var sourceTsFiles = [config.allTypeScriptForms,                //path to typescript files
-                         config.allTypeScriptLib,
-                         config.libraryTypeScriptDefinitions, //reference to library .d.ts files
-                         config.appTypeScriptReferences];     //reference to app.d.ts files
-
-    var tsResult = gulp.src(sourceTsFiles)
-                       .pipe(sourcemaps.init())
-                       .pipe(tsc({
-                           target: 'ES5',
-                           declarationFiles: false,
-                           noExternalResolve: true
-                       }));
-
-        tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
-        return tsResult.js
-                        .pipe(sourcemaps.write('.'))
-                        .pipe(gulp.dest(config.tsOutputPath));
+gulp.task('upload', ['combinecontactformscripts'], function(){
+    console.log('upload task starting');
+    gulp.src('./FormScriptsCombined/*.js')  
+    .pipe(webresource.Upload(config,true));
 });
 
-/**
- * Remove all generated JavaScript files from TypeScript compilation.
- */
-gulp.task('clean-ts', function () {
-  var typeScriptGenFiles = [config.tsOutputPath,            // path to generated JS files
-                            config.sourceForms +'**/*.js',    // path to all JS files auto gen'd by editor
-                            config.sourceForms + '**/*.js.map', // path to all sourcemap files auto gen'd by editor                            
-                            config.sourceLib +'**/*.js',    // path to all JS files auto gen'd by editor
-                            config.sourceLib +'**/*.js.map' // path to all sourcemap files auto gen'd by editor
-                           ];
-
-del(typeScriptGenFiles, function (err, paths) {
-    console.log('Deleted files/folders:\n', paths.join('\n'));
+gulp.task('watch', function() {
+    gulp.watch('./src/*.ts', ['transpile','combinecontactformscripts']);
 });
 
-});
+gulp.task('publish', ['transpile','combinecontactformscripts','upload']);
 
-gulp.task('browserify', function() {
-  var production = 'production';
-  console.log(config.allJavaScriptForms);
-  gulp.src(config.allJavaScriptForms, {read: false})
-
-    // Browserify, and add source maps if this isn't a production build
-    .pipe(browserify({
-      debug: !production,
-    }))
-
-    .on('prebundle', function(bundler) {
-      // Make React available externally for dev tools
-     
-    })
-    // Output to the build directory
-    .pipe(gulp.dest('.dist/'));
-});
-
-gulp.task('deploy', function () {
-    return gulp.src('.dist/*.js', { read: false })        
-        .pipe(shell(
-            config.deploycmd + ' /Action DeployWebResource /File <%= f(file.path) %> /UniqueName '
-            + config.publisherPrefix + '<%= f(file.path.replace(file.base, "'
-            + '")) %> /DisplayName <%= f(file.path.replace(file.base, "")) %> /WebResourceType JavaScript', {
-            templateData: {
-                f: function (s) {
-                    return s
-                }
-            }
-        }))
-});
-
-gulp.task('watch', function () {
-    var typeScriptWatchFiles = [config.allTypeScriptForms,
-                            config.allTypeScriptLib
-                           ];
-    gulp.watch(typeScriptWatchFiles, ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib','browserify']);
-});
-
-gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs','ts-lint-lib', 'browserify',  'watch']);
-   
+gulp.task('default', ['transpile','combinecontactformscripts']);

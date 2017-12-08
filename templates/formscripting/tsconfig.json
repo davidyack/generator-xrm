@@ -1,0 +1,10 @@
+{
+  "files": [
+      "src/FormShared.ts",
+      "src/FormContact.ts"
+  ],
+  "compilerOptions": {
+      "noImplicitAny": true,
+      "target": "es5"
+  }
+}

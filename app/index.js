@@ -65,15 +65,11 @@ module.exports = generators.Base.extend({
 
         case 'formscripting':
             this.sourceRoot(path.join(__dirname, '../templates/' + this.templatetype));
-            this.fs.copyTpl(this.templatePath('/forms/FormContact.ts'), this.destinationPath('/forms/FormContact.ts'),  this.templatedata); 
-            this.fs.copyTpl(this.templatePath('/lib/SharedFormLogic.ts'), this.destinationPath('/lib/SharedFormLogic.ts'),  this.templatedata);
-            this.fs.copy(this.templatePath('/xrmproject.json'), this.destinationPath('/xrmproject.json'));            
+            this.fs.copyTpl(this.templatePath('/src/FormContact.ts'), this.destinationPath('/src/FormContact.ts'),  this.templatedata); 
+            this.fs.copyTpl(this.templatePath('/src/FormShared.ts'), this.destinationPath('/src/FormShared.ts'),  this.templatedata); 
             this.fs.copy(this.templatePath('/package.json'), this.destinationPath('/package.json'));
-            this.fs.copy(this.templatePath('/tsd.json'), this.destinationPath('/tsd.json'));
-            this.fs.copyTpl(this.templatePath('/gulpfile.config.js'), this.destinationPath('/gulpfile.config.js'),this.templatedata);
+            this.fs.copy(this.templatePath('/tsconfig.json'), this.destinationPath('/tsconfig.json'));
             this.fs.copy(this.templatePath('/gulpfile.js'), this.destinationPath( '/gulpfile.js'));
-            this.fs.copy(this.templatePath('/forms'), this.destinationPath('/forms'));
-            this.fs.copy(this.templatePath('/typings'), this.destinationPath('/typings'));
             this.log('Preparing to install dependencies');
             this.npmInstall();          
             break;

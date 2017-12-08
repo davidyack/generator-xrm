@@ -1,24 +1,19 @@
 {
   "name": "formscripting",
   "version": "1.0.0",
-  "description": "CRM Form Scripts",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "tsd": "next",
-    "gulp": "^3.8.11",
-    "gulp-typescript": "^2.5.0", 
-    "gulp-tsd": "0.0.4",
-    "gulp-debug": "^2.0.1", 
-    "gulp-inject": "^1.2.0", 
-    "gulp-sourcemaps": "^1.5.1", 
-    "gulp-tslint": "^1.4.4",      
-     "gulp-shell": "^0.4.1",
-     "gulp-browserify": "^0.5.1",
-     "del": "^1.1.1"
-  },
-  "private": true
+    "@types/xrm": "^9.0.2",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.3",
+    "gulp-concat": "^2.6.1",
+    "gulp-webresource": "^1.3.0",
+    "typescript": "^2.6.2"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "generator-xrm",
-  "version": "1.0.4",
+  "version": "1.0.9",
   "description": "Generator for Dynamics CRM projects ",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/davidyack/generator-xrm",
   "dependencies": {
-    "yeoman-generator": "^0.19.1"
+    "yeoman-generator": "^0.19.2"
   }
 }
